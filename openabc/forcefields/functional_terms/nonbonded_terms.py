@@ -202,4 +202,51 @@ def dh_elec_term(charges, df_exclusions, use_pbc, ldby=1*unit.nanometer, dielect
     return elec
 
 
+def ddd_dh_elec_switch_term_map(charges, df_exclusions, use_pbc, salt_conc=150.0*unit.millimolar, 
+                            temperature=300.0*unit.kelvin, cutoff1=1.2*unit.nanometer, cutoff2=1.5*unit.nanometer, 
+                            switch_coeff=[1, 0, 0, -10, 15, -6], force_group=6):
+    '''
+    Debye-Huckel potential with a distance-dependent dielectric and a switch function. 
+    The switch function value changes from 1 to 0 smoothly as distance r changes from cutoff1 to cutoff2. 
+    To make sure the switch function works properly, the zeroth order coefficient has to be 1, and the sum of all the coefficients in switch_coeff has to be 0. 
+    '''
+    alpha = NA*EC**2/(4*np.pi*VEP)
+    gamma = VEP*kB*temperature/(2.0*NA*salt_conc*EC**2)
+    # use a distance-dependent relative permittivity (dielectric)
+    dielectric_water = 78.4
+    A = -8.5525
+    kappa = 7.7839
+    B = dielectric_water - A
+    zeta = 0.03627
+    alpha_value = alpha.value_in_unit(unit.kilojoule_per_mole*unit.nanometer)
+    cutoff1_value = cutoff1.value_in_unit(unit.nanometer)
+    cutoff2_value = cutoff2.value_in_unit(unit.nanometer)
+    gamma_value = gamma.value_in_unit(unit.nanometer**2)
+    assert switch_coeff[0] == 1
+    assert np.sum(np.array(switch_coeff)) == 0
+    switch_term_list = []
+    for i in range(len(switch_coeff)):
+        if i == 0:
+            switch_term_list.append(f'{switch_coeff[i]}')
+        else:
+            switch_term_list.append(f'({switch_coeff[i]}*((r-{cutoff1_value})/({cutoff2_value}-{cutoff1_value}))^{i})')
+    switch_term_string = '+'.join(switch_term_list)
+    elec = mm.CustomNonbondedForce(f'''energy;
+           energy=q1*q2*{alpha_value}*exp(-r/ldby)*switch/(dielectric*r);
+           switch=({switch_term_string})*step(r-{cutoff1_value})*step({cutoff2_value}-r)+step({cutoff1_value}-r);
+           ldby=(dielectric*{gamma_value})^0.5;
+           dielectric={A}+{B}/(1+{kappa}*exp(-{zeta}*{B}*r));
+           ''')
+    elec.addPerParticleParameter('q')
+    for q in charges:
+        elec.addParticle([q])
+    for i, row in df_exclusions.iterrows():
+        elec.addExclusion(int(row['a1']), int(row['a2']))
+    if use_pbc:
+        elec.setNonbondedMethod(elec.CutoffPeriodic)
+    else:
+        elec.setNonbondedMethod(elec.CutoffNonPeriodic)
+    elec.setCutoffDistance(cutoff2)
+    elec.setForceGroup(force_group)
+    return elec
 
