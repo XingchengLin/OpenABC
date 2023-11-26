@@ -1,13 +1,8 @@
 import numpy as np
 import pandas as pd
-try:
-    import openmm as mm
-    import openmm.app as app
-    import openmm.unit as unit
-except ImportError:
-    import simtk.openmm as mm
-    import simtk.openmm.app as app
-    import simtk.unit as unit
+import simtk.openmm as mm
+import simtk.openmm.app as app
+import simtk.unit as unit
 import sys
 import os
 
@@ -15,9 +10,9 @@ __location__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append('../..')
 from openabc.utils.replica_exchange import TemperatureReplicaExchange
 
-"""
+'''
 Run replica exchange for HP1alpha dimer. 
-"""
+'''
 
 # prepare system
 top = app.PDBFile('hp1alpha_dimer_CA.pdb').getTopology()

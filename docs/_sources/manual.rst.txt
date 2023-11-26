@@ -14,12 +14,6 @@ openabc.forcefields
     :members:
     :show-inheritance:
 
-.. automodule:: openabc.forcefields.mpipi_model
-    :members:
-    :show-inheritance:
-
-.. automodule:: openabc.forcefields.smog_3spn2_model
-
 openabc.forcefields.parsers
 ---------------------------
 .. automodule:: openabc.forcefields.parsers.moff_parser
@@ -29,15 +23,6 @@ openabc.forcefields.parsers
     :members:
 
 .. automodule:: openabc.forcefields.parsers.hps_parser
-    :members:
-
-.. automodule:: openabc.forcefields.parsers.mpipi_parsers
-    :members:
-
-.. automodule:: openabc.forcefields.parsers.smog_parser
-    :members:
-
-.. automodule:: openabc.forcefields.parsers.dna_3spn2_parser
     :members:
 
 openabc.utils.CA2AA
@@ -65,14 +50,5 @@ opeanbc.utils.insert
 .. automodule:: openabc.utils.insert
     :members:
 
-openabc.utils.stride
---------------------
-.. automodule:: openabc.utils.stride
-    :members:
-
-openabc.utils.chromatin_helper_functions
-----------------------------------------
-.. automodule:: openabc.utils.chromatin_helper_functions
-    :members:
 
 

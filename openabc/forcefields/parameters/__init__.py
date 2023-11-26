@@ -1,2 +1,0 @@
-from .mixin_3spn2_config_parser import Mixin3SPN2ConfigParser
-

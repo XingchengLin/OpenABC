@@ -2,7 +2,6 @@
 **/*.dcd
 **/*.pdf
 **/*.tar.gz
-**/*.npy
 
 __pycache__/
 my-tests/
@@ -13,8 +12,5 @@ backup/
 
 examples/minimal-example/
 
-dist/
-openabc.egg-info/
 
-.ipynb_checkpoints/
 
